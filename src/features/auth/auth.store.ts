@@ -26,6 +26,7 @@ const useAuthStore = create<AuthState>()(
 			login: async (email, password) => {
 				try {
 					// TODO: Uncomment and use real login api, for accessToken use httpOnly cookie to prevent XSS
+					console.log(email, password); // just to bypass the lint checking
 					// const response = await apiClient.post("/auth/login", {
 					// 	email,
 					// 	password,

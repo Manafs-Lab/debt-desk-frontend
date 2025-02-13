@@ -1,14 +1,9 @@
 import { style } from "@vanilla-extract/css";
 
-export const contentChildrenWrapper = style({
+export const publicChildrenWrapper = style({
 	margin: "2rem 1rem",
 });
 
-export const authChildrenWrapper = style({
+export const dashboardChildrenWrapper = style({
 	margin: "2rem 1rem",
-});
-
-export const authLayoutTitle = style({
-	textAlign: "center",
-	marginTop: "2rem",
 });

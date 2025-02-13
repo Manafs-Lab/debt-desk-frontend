@@ -1,4 +1,4 @@
-// import apiClient from "@/lib/api-client";
+import { apiClient } from "@/lib/api-client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -12,7 +12,7 @@ interface User {
 interface AuthState {
 	user: User | null;
 	isAuthenticated: boolean;
-	login: (email: string, password: string) => Promise<void>;
+	login: (email: string, password: string) => Promise<boolean>;
 	logout: () => void;
 	setUser: (user: User) => void;
 }
@@ -25,18 +25,15 @@ const useAuthStore = create<AuthState>()(
 
 			login: async (email, password) => {
 				try {
-					// TODO: Uncomment and use real login api, for accessToken use httpOnly cookie to prevent XSS
-					console.log(email, password); // just to bypass the lint checking
-					// const response = await apiClient.post("/auth/login", {
-					// 	email,
-					// 	password,
-					// });
-					// const userData = response.data;
-					// set({ user: userData as User, isAuthenticated: true });
-					set({ isAuthenticated: true });
+					const response = await apiClient.post("/auth/login", {
+						email,
+						password,
+					});
+					const userData = response.data;
+					set({ user: userData as User, isAuthenticated: true });
+					return true;
 				} catch (error) {
-					console.error("Login failed:", error);
-					throw error;
+					return false;
 				}
 			},
 

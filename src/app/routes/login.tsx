@@ -1,11 +1,11 @@
-import AuthLayout from "@/components/layouts/auth-layout";
+import PublicLayout from "@/components/layouts/public-layout";
 import LoginForm from "@/features/auth/components/login-form";
 
 const LoginPage = () => {
 	return (
-		<AuthLayout title="Login">
+		<PublicLayout>
 			<LoginForm />
-		</AuthLayout>
+		</PublicLayout>
 	);
 };
 

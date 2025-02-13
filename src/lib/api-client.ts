@@ -15,9 +15,12 @@ apiClient.interceptors.response.use(
 	(response) => response,
 	(error) => {
 		if (error.response?.status === 401) {
-			console.warn("Session expired. Logging out...");
 			useAuthStore.getState().logout();
-			window.location.href = LOGIN_ROUTE;
+			return Promise.reject({
+				...new Error(),
+				message: error.response.data?.message,
+				redirect: LOGIN_ROUTE,
+			});
 		}
 		return Promise.reject(error);
 	},

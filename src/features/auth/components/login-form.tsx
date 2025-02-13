@@ -1,4 +1,5 @@
 import useAuthStore from "@/features/auth/auth.store";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	Box,
 	Button,
@@ -7,19 +8,38 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { FormEvent, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useLocation } from "wouter";
+import { z } from "zod";
+
+const LoginSchema = z.object({
+	email: z.string().email("Invalid email format"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export type TLoginData = z.infer<typeof LoginSchema>;
 
 const LoginForm = () => {
 	const [, setLocation] = useLocation();
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
 	const { login } = useAuthStore();
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		login("", "");
-		setLocation("/");
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<TLoginData>({
+		resolver: zodResolver(LoginSchema),
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+	});
+
+	const onSubmit = async (data: TLoginData) => {
+		const isLoggedIn = await login(data.email, data.password);
+		if (isLoggedIn) {
+			setLocation("/dashboard");
+		}
 	};
 
 	return (
@@ -38,7 +58,7 @@ const LoginForm = () => {
 					</Typography>
 					<Box
 						component="form"
-						onSubmit={handleSubmit}
+						onSubmit={handleSubmit(onSubmit)}
 						noValidate
 						sx={{ mt: 1 }}
 					>
@@ -48,23 +68,23 @@ const LoginForm = () => {
 							fullWidth
 							id="email"
 							label="Email Address"
-							name="email"
 							autoComplete="email"
 							autoFocus
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
+							error={!!errors.email}
+							helperText={errors.email?.message}
+							{...register("email")}
 						/>
 						<TextField
 							margin="normal"
 							required
 							fullWidth
-							name="password"
 							label="Password"
 							type="password"
 							id="password"
 							autoComplete="current-password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
+							error={!!errors.password}
+							helperText={errors.password?.message}
+							{...register("password")}
 						/>
 						<Button
 							type="submit"

@@ -1,0 +1,64 @@
+import { create } from "zustand";
+
+interface FormState {
+	step: number;
+	businessName: string;
+	businessType: string;
+	businessAddress: string;
+	userName: string;
+	email: string;
+	userPhone: string;
+	userAddress: string;
+	password: string;
+	confirmPassword: string;
+	setField: (
+		field: keyof Omit<FormState, "step" | "nextStep" | "prevStep" | "reset">,
+		value: string,
+	) => void;
+	nextStep: () => void;
+	prevStep: () => void;
+	reset: () => void;
+}
+
+export const useFormStore = create<FormState>((set) => ({
+	step: 1,
+	businessName: "",
+	businessType: "",
+	businessAddress: "",
+	userName: "",
+	email: "",
+	userPhone: "",
+	userAddress: "",
+	password: "",
+	confirmPassword: "",
+
+	setField: (field, value) =>
+		set((state) => ({
+			...state,
+			[field]: value, // Ensure the correct field is updated
+		})),
+
+	nextStep: () =>
+		set((state) => ({
+			step: state.step < 3 ? state.step + 1 : state.step, // Prevent going beyond step 3
+		})),
+
+	prevStep: () =>
+		set((state) => ({
+			step: state.step > 1 ? state.step - 1 : state.step, // Prevent going below step 1
+		})),
+
+	reset: () =>
+		set({
+			step: 1,
+			businessName: "",
+			businessType: "",
+			email: "",
+			businessAddress: "",
+			userName: "",
+			userPhone: "",
+			userAddress: "",
+			password: "",
+			confirmPassword: "",
+		}),
+}));

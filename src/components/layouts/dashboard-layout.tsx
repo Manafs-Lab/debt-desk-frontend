@@ -12,10 +12,10 @@ interface IDashboardLayout {
 
 const DashboardLayout = ({ children }: IDashboardLayout) => {
 	return (
-		<>
+		<div style={{ display: "flex" }}>
 			<Sidebar />
 			<div className={dashboardChildrenWrapper}>{children}</div>
-		</>
+		</div>
 	);
 };
 

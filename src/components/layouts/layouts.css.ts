@@ -6,4 +6,5 @@ export const publicChildrenWrapper = style({
 
 export const dashboardChildrenWrapper = style({
 	margin: "2rem 1rem",
+	flex: 1,
 });

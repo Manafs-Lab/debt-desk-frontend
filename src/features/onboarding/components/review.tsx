@@ -1,5 +1,8 @@
+import { LOGIN_ROUTE } from "@/config/constant";
 import { Box, Button, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { useLocation } from "wouter";
+import { useSubmitOnboarding } from "../api/onboarding";
 import { useFormStore } from "../onboarding.store";
 
 type TReviewProps = {
@@ -9,7 +12,8 @@ type TReviewProps = {
 	handleBack: () => void;
 };
 
-const Review = ({ step, steps, handleNext, handleBack }: TReviewProps) => {
+const Review = ({ step, steps, handleBack }: TReviewProps) => {
+	const [, setLocation] = useLocation();
 	const {
 		businessName,
 		businessType,
@@ -18,46 +22,43 @@ const Review = ({ step, steps, handleNext, handleBack }: TReviewProps) => {
 		userName,
 		userPhone,
 		userAddress,
+		password,
 	} = useFormStore();
 
-	const {
-		handleSubmit,
-		formState: { errors },
-	} = useForm();
+	const { handleSubmit } = useForm();
+
+	const mutation = useSubmitOnboarding({
+		onSuccess: (data: any) => {
+			console.log("API Response:", data);
+			setLocation(LOGIN_ROUTE);
+		},
+		onError: (error: any) => {
+			console.error("API Error:", error);
+		},
+	});
 
 	const onSubmit = async () => {
 		const formData = {
-			businessName,
-			businessType,
-			businessAddress,
-			email,
-			userName,
-			userPhone,
-			userAddress,
+			business: {
+				name: businessName,
+				type: businessType,
+				address: businessAddress,
+				email: email,
+			},
+			user: {
+				name: userName,
+				phone: userPhone,
+				picture: "https://example.com/images/default_user.jpg",
+				user_address: userAddress,
+				type: "VENDOR",
+				flag: "REGULAR",
+				email: email,
+				password: password,
+			},
 		};
 
-		console.log("Submitted Data:", formData); // ✅ Debugging
-
-		try {
-			const response = await fetch("https://your-api.com/onboarding", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(formData),
-			});
-
-			const result = await response.json();
-			console.log("API Response:", result); // ✅ Log API response
-
-			if (response.ok) {
-				handleNext(); // Move to the next step
-			} else {
-				console.error("Error submitting form:", result);
-			}
-		} catch (error) {
-			console.error("Network error:", error);
-		}
+		console.log("Formatted API Data:", formData);
+		mutation.mutate(formData);
 	};
 
 	return (

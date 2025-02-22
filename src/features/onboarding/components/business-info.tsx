@@ -6,10 +6,8 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
-	SelectChangeEvent,
 	TextField,
 } from "@mui/material";
-import type React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useFormStore } from "../onboarding.store";
@@ -42,7 +40,6 @@ const BusinessInfo = ({
 	const {
 		register,
 		handleSubmit,
-		setValue,
 		formState: { errors },
 	} = useForm<TBusinessOnboardingData>({
 		resolver: zodResolver(BusinessOnboardingSchema),
@@ -70,8 +67,8 @@ const BusinessInfo = ({
 				label="Business Name"
 				margin="normal"
 				required
-				error={!!errors.name}
-				helperText={errors.name?.message}
+				error={!!errors.businessName}
+				helperText={errors.businessName?.message}
 				{...register("businessName")}
 			/>
 			<FormControl fullWidth margin="normal" required>

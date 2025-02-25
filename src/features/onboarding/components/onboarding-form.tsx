@@ -24,13 +24,10 @@ const BusinessOnboardingForm: React.FC = () => {
 	const handleNext = () => {
 		if (step === 1 && businessInfoRef.current) {
 			businessInfoRef.current();
-			// Form submission logic here
-			console.log("Form submitted!");
 			return;
 		}
 
 		if (step === steps.length) {
-			console.log("Form submitted!");
 			reset();
 		} else {
 			nextStep();

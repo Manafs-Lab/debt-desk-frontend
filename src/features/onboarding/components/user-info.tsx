@@ -74,7 +74,6 @@ const UserInfo = ({ step, steps, handleNext, handleBack }: TUserInfoProps) => {
 
 	// Handle form submission
 	const onSubmit = (data: TUserInfo) => {
-		console.log("User Data Submitted:", data);
 		setField("userName", data.userName);
 		setField("userPhone", data.userPhone);
 		setField("email", data.email);

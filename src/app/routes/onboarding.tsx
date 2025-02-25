@@ -22,10 +22,7 @@ const OnboardingForm = () => {
 		setErrorMessage(errorDescription || null);
 
 		if (accessToken) {
-			// ✅ Save token in cookies for future API calls
 			Cookies.set("accessToken", accessToken);
-
-			console.log(Cookies.get("accessToken"));
 		} else if (error && !errorShown) {
 			enqueueSnackbar(`${errorDescription || "No Access Token Found in URL"}`, {
 				variant: "error",

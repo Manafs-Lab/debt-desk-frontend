@@ -52,7 +52,6 @@ const BusinessInfo = ({
 	});
 
 	const onSubmit = (data: TBusinessOnboardingData) => {
-		console.log("Submitted Data:", data);
 		setField("businessName", data.businessName);
 		setField("businessType", data.businessType);
 		setField("email", data.email);

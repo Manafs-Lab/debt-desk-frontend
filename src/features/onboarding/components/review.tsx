@@ -29,7 +29,6 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 
 	const mutation = useSubmitOnboarding({
 		onSuccess: (data: any) => {
-			console.log("API Response:", data);
 			setLocation(LOGIN_ROUTE);
 		},
 		onError: (error: any) => {
@@ -48,7 +47,7 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 			user: {
 				name: userName,
 				phone: userPhone,
-				picture: "https://example.com/images/default_user.jpg",
+				picture: "https://shorturl.at/MCbaE",
 				user_address: userAddress,
 				type: "VENDOR",
 				flag: "REGULAR",
@@ -57,7 +56,6 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 			},
 		};
 
-		console.log("Formatted API Data:", formData);
 		mutation.mutate(formData);
 	};
 

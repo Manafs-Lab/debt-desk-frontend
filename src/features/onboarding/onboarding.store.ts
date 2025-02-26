@@ -12,8 +12,19 @@ interface FormState {
 	password: string;
 	confirmPassword: string;
 	setField: (
-		field: keyof Omit<FormState, "step" | "nextStep" | "prevStep" | "reset">,
+		field: keyof Omit<
+			FormState,
+			"step" | "nextStep" | "prevStep" | "reset" | "setFields"
+		>,
 		value: string,
+	) => void;
+	setFields: (
+		fields: Partial<
+			Omit<
+				FormState,
+				"step" | "nextStep" | "prevStep" | "reset" | "setField" | "setFields"
+			>
+		>,
 	) => void;
 	nextStep: () => void;
 	prevStep: () => void;
@@ -35,17 +46,23 @@ export const useFormStore = create<FormState>((set) => ({
 	setField: (field, value) =>
 		set((state) => ({
 			...state,
-			[field]: value, // Ensure the correct field is updated
+			[field]: value,
+		})),
+
+	setFields: (fields) =>
+		set((state) => ({
+			...state,
+			...fields,
 		})),
 
 	nextStep: () =>
 		set((state) => ({
-			step: state.step < 3 ? state.step + 1 : state.step, // Prevent going beyond step 3
+			step: state.step < 3 ? state.step + 1 : state.step,
 		})),
 
 	prevStep: () =>
 		set((state) => ({
-			step: state.step > 1 ? state.step - 1 : state.step, // Prevent going below step 1
+			step: state.step > 1 ? state.step - 1 : state.step,
 		})),
 
 	reset: () =>

@@ -7,13 +7,11 @@ import {
 	InputAdornment,
 	TextField,
 } from "@mui/material";
-import type React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useFormStore } from "../onboarding.store";
 
-// Validation Schema
 const UserSchema = z
 	.object({
 		userName: z.string().min(3, "Full Name must be at least 3 characters"),
@@ -49,7 +47,7 @@ const UserInfo = ({ step, steps, handleNext, handleBack }: TUserInfoProps) => {
 		userAddress,
 		password,
 		confirmPassword,
-		setField,
+		setFields,
 	} = useFormStore();
 
 	const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +56,6 @@ const UserInfo = ({ step, steps, handleNext, handleBack }: TUserInfoProps) => {
 	const {
 		register,
 		handleSubmit,
-		setValue,
 		formState: { errors },
 	} = useForm<TUserInfo>({
 		resolver: zodResolver(UserSchema),
@@ -72,14 +69,15 @@ const UserInfo = ({ step, steps, handleNext, handleBack }: TUserInfoProps) => {
 		},
 	});
 
-	// Handle form submission
 	const onSubmit = (data: TUserInfo) => {
-		setField("userName", data.userName);
-		setField("userPhone", data.userPhone);
-		setField("email", data.email);
-		setField("userAddress", data.userAddress);
-		setField("password", data.password);
-		setField("confirmPassword", data.confirmPassword);
+		setFields({
+			userName: data.userName,
+			userPhone: data.userPhone,
+			email: data.email,
+			userAddress: data.userAddress,
+			password: data.password,
+			confirmPassword: data.confirmPassword,
+		});
 		handleNext();
 	};
 
@@ -127,7 +125,6 @@ const UserInfo = ({ step, steps, handleNext, handleBack }: TUserInfoProps) => {
 				{...register("userAddress")}
 			/>
 
-			{/* Password Field */}
 			<TextField
 				fullWidth
 				label="Password"
@@ -151,7 +148,6 @@ const UserInfo = ({ step, steps, handleNext, handleBack }: TUserInfoProps) => {
 				}}
 			/>
 
-			{/* Confirm Password Field */}
 			<TextField
 				fullWidth
 				label="Confirm Password"

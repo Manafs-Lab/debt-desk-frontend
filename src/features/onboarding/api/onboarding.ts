@@ -11,7 +11,7 @@ type TOnboardingData = {
 	user: {
 		name: string;
 		phone: string;
-		picture: string;
+		picture?: string;
 		user_address: string;
 		type: string;
 		flag: string;
@@ -20,13 +20,11 @@ type TOnboardingData = {
 	};
 };
 
-// API request function
 export const submitOnboardingData = async (data: TOnboardingData) => {
 	const response = await apiClient.post("/business/onboarding", data);
 	return response.data;
 };
 
-// React Query Mutation Hook
 export const useSubmitOnboarding = (config = {}) => {
 	return useMutation({
 		mutationFn: submitOnboardingData,

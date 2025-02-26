@@ -34,7 +34,7 @@ const BusinessInfo = ({
 	handleNext,
 	handleBack,
 }: TBusinessInfoProps) => {
-	const { setField, businessName, businessType, email, businessAddress } =
+	const { setFields, businessName, businessType, email, businessAddress } =
 		useFormStore();
 
 	const {
@@ -52,10 +52,12 @@ const BusinessInfo = ({
 	});
 
 	const onSubmit = (data: TBusinessOnboardingData) => {
-		setField("businessName", data.businessName);
-		setField("businessType", data.businessType);
-		setField("email", data.email);
-		setField("businessAddress", data.businessAddress);
+		setFields({
+			businessName: data.businessName,
+			businessType: data.businessType,
+			email: data.email,
+			businessAddress: data.businessAddress,
+		});
 		handleNext();
 	};
 

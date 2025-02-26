@@ -28,7 +28,7 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 	const { handleSubmit } = useForm();
 
 	const mutation = useSubmitOnboarding({
-		onSuccess: (data: any) => {
+		onSuccess: () => {
 			setLocation(LOGIN_ROUTE);
 		},
 		onError: (error: any) => {
@@ -47,7 +47,6 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 			user: {
 				name: userName,
 				phone: userPhone,
-				picture: "https://shorturl.at/MCbaE",
 				user_address: userAddress,
 				type: "VENDOR",
 				flag: "REGULAR",

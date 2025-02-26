@@ -12,7 +12,6 @@ const OnboardingForm = () => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		// Extract hash fragment from URL
 		const hashParams = new URLSearchParams(
 			window.location.href.split("#")[1] || "",
 		);

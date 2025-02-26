@@ -19,7 +19,7 @@ const steps = ["Business Information", "User Information", "Review & Submit"];
 
 const BusinessOnboardingForm: React.FC = () => {
 	const { step, nextStep, prevStep, reset } = useFormStore();
-	const businessInfoRef = useRef<() => void>(null!);
+	const businessInfoRef = useRef<(() => void) | null>(null);
 
 	const handleNext = () => {
 		if (step === 1 && businessInfoRef.current) {

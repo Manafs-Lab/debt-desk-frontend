@@ -1,6 +1,14 @@
 import { Box, Button, Typography } from "@mui/material";
 
-export const MainErrorFallback = () => {
+type TMainErrorFallBack = {
+	message?: string | null;
+	showRefreshButton?: boolean;
+};
+
+export const MainErrorFallback = ({
+	message,
+	showRefreshButton,
+}: TMainErrorFallBack) => {
 	return (
 		<Box
 			sx={{
@@ -16,16 +24,19 @@ export const MainErrorFallback = () => {
 			role="alert"
 		>
 			<Typography variant="h6" fontWeight="bold">
-				Oops, something went wrong :(
+				{message || "Oops, something went wrong :("}
 			</Typography>
-			<Button
-				variant="contained"
-				color="primary"
-				sx={{ mt: 2 }}
-				onClick={() => window.location.assign(window.location.origin)}
-			>
-				Refresh
-			</Button>
+
+			{showRefreshButton && (
+				<Button
+					variant="contained"
+					color="primary"
+					sx={{ mt: 2 }}
+					onClick={() => window.location.assign(window.location.origin)}
+				>
+					Refresh
+				</Button>
+			)}
 		</Box>
 	);
 };

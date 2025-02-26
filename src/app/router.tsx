@@ -5,6 +5,7 @@ import Dashboard from "./routes/dashboard";
 import Landing from "./routes/landing";
 import LoginPage from "./routes/login";
 import NotFoundRoute from "./routes/not-found";
+import OnboardingForm from "./routes/onboarding";
 import Signup from "./routes/signup";
 
 const AppRouter = () => {
@@ -15,6 +16,7 @@ const AppRouter = () => {
 				<Route path={LOGIN_ROUTE} component={LoginPage} />
 				<Route path="/auth/signup" component={Signup} />
 				<PrivateRoute path="/dashboard" component={Dashboard} />
+				<Route path="/business/verify" component={OnboardingForm} />
 				<Route path="*" component={NotFoundRoute} />
 			</Switch>
 		</WouterRouter>

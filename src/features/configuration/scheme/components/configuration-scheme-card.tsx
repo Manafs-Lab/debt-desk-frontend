@@ -7,14 +7,21 @@ import {
 	SxProps,
 	Typography,
 } from "@mui/material";
-import { TConfigurationSchema } from "../api/get-all-configuration-schema";
+import { useDeleteConfigurationScheme } from "../api/delete-configuration-scheme";
+import { TConfigurationScheme } from "../api/get-all-configuration-scheme";
 
 type TSchemeCard = {
 	sx?: SxProps;
-	scheme: TConfigurationSchema;
+	scheme: TConfigurationScheme;
 };
 
 const SchemeCard = ({ sx, scheme }: TSchemeCard) => {
+	const { mutate: deleteScheme } = useDeleteConfigurationScheme();
+
+	const onDelete = () => {
+		deleteScheme({ schemeId: scheme.id });
+	};
+
 	return (
 		<Card sx={{ ...sx }}>
 			<CardHeader
@@ -55,7 +62,12 @@ const SchemeCard = ({ sx, scheme }: TSchemeCard) => {
 				<Button variant="outlined" color="primary" size="small">
 					Edit
 				</Button>
-				<Button variant="outlined" color="error" size="small">
+				<Button
+					variant="outlined"
+					color="error"
+					size="small"
+					onClick={onDelete}
+				>
 					Delete
 				</Button>
 			</CardActions>

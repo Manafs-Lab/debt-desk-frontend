@@ -1,9 +1,9 @@
 import GlobalErrorHandler from "@/components/errors/global-error-handler";
 import { MainErrorFallback } from "@/components/errors/main";
-import { queryConfig } from "@/lib/react-query";
+import { queryClient } from "@/lib/react-query";
 import theme from "@/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { SnackbarProvider } from "notistack";
 import React, { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -12,11 +12,9 @@ interface IAppProvider {
 }
 
 const AppProvider = ({ children }: IAppProvider) => {
-	const [queryClient] = useState(
-		() => new QueryClient({ defaultOptions: queryConfig }),
-	);
+	const [queryClientState] = useState(() => queryClient);
 	return (
-		<QueryClientProvider client={queryClient}>
+		<QueryClientProvider client={queryClientState}>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<SnackbarProvider autoHideDuration={3000}>

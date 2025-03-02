@@ -7,6 +7,7 @@ import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
 const OnboardingForm = () => {
+	const [accessToken, setAccessToken] = useState<string | null>(null);
 	const [errorShown, setErrorShown] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -21,6 +22,7 @@ const OnboardingForm = () => {
 		setErrorMessage(errorDescription || null);
 
 		if (accessToken) {
+			setAccessToken(accessToken);
 			Cookies.set("accessToken", accessToken);
 		} else if (error && !errorShown) {
 			enqueueSnackbar(`${errorDescription || "No Access Token Found in URL"}`, {
@@ -44,6 +46,12 @@ const OnboardingForm = () => {
 			>
 				<CircularProgress />
 			</Box>
+		);
+	}
+
+	if (!accessToken) {
+		return (
+			<ErrorPage message="Access Denied: You are not authorized to view this page." />
 		);
 	}
 

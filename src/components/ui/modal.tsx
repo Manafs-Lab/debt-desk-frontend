@@ -99,7 +99,7 @@ const Modal: React.FC<IModalProps> = ({
 
 			<DialogActions sx={{ padding: 2, paddingTop: 0 }}>
 				<Button
-					onClick={onClose}
+					onClick={handleClose}
 					variant="outlined"
 					sx={{
 						color: "text.primary",

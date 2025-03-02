@@ -1,5 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import {
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -23,7 +24,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
 	display: "flex",
 	justifyContent: "space-between",
-	alignItems: "center",
+	alignItems: "start",
 	padding: theme.spacing(2, 3),
 	color: theme.palette.text.primary,
 }));
@@ -34,9 +35,10 @@ const StyledCloseButton = styled(IconButton)(({ theme }) => ({
 
 interface IModalProps {
 	open: boolean;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	title: string;
 	subtitle?: string;
-	onClose: () => void;
+	onClose?: () => void;
 	onAction?: () => void;
 	actionName?: string;
 	children?: React.ReactNode;
@@ -46,6 +48,7 @@ interface IModalProps {
 
 const Modal: React.FC<IModalProps> = ({
 	open,
+	setOpen,
 	title,
 	subtitle,
 	onClose,
@@ -55,33 +58,44 @@ const Modal: React.FC<IModalProps> = ({
 	maxWidth = "sm",
 	fullWidth = true,
 }) => {
+	const handleClose = () => {
+		setOpen(false);
+		if (onClose) onClose();
+	};
 	return (
 		<StyledDialog
 			open={open}
-			onClose={onClose}
+			onClose={handleClose}
 			maxWidth={maxWidth}
 			fullWidth={fullWidth}
 			aria-labelledby="modal-title"
 			aria-describedby="modal-description"
 		>
 			<StyledDialogTitle id="modal-title">
-				<Typography variant="h3">{title}</Typography>
-				<StyledCloseButton aria-label="close" onClick={onClose}>
+				<Box>
+					<Typography variant="h3" id="modal-title">
+						{title}
+					</Typography>
+					{subtitle && (
+						<Typography
+							variant="body2"
+							id="modal-description"
+							sx={{
+								color: "text.secondary",
+								mt: 1,
+							}}
+						>
+							{subtitle}
+						</Typography>
+					)}
+				</Box>
+
+				<StyledCloseButton aria-label="close" onClick={handleClose}>
 					<CloseIcon />
 				</StyledCloseButton>
 			</StyledDialogTitle>
 
-			<DialogContent>
-				{subtitle && (
-					<DialogContentText
-						id="modal-description"
-						sx={{ color: "text.secondary", mb: 2 }}
-					>
-						{subtitle}
-					</DialogContentText>
-				)}
-				{children}
-			</DialogContent>
+			{children && <DialogContent>{children}</DialogContent>}
 
 			<DialogActions sx={{ padding: 2, paddingTop: 0 }}>
 				<Button

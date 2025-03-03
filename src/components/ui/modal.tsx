@@ -1,13 +1,12 @@
-import CloseIcon from "@mui/icons-material/Close";
+import { TButtonColors } from "@/types/theme.types";
 import {
 	Box,
 	Button,
+	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	DialogTitle,
-	IconButton,
 	Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -29,10 +28,6 @@ const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
 	color: theme.palette.text.primary,
 }));
 
-const StyledCloseButton = styled(IconButton)(({ theme }) => ({
-	color: theme.palette.text.primary,
-}));
-
 interface IModalProps {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,6 +39,8 @@ interface IModalProps {
 	children?: React.ReactNode;
 	maxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
 	fullWidth?: boolean;
+	actionColor?: TButtonColors;
+	isActionPending?: boolean;
 }
 
 const Modal: React.FC<IModalProps> = ({
@@ -57,6 +54,8 @@ const Modal: React.FC<IModalProps> = ({
 	children,
 	maxWidth = "sm",
 	fullWidth = true,
+	actionColor = "primary",
+	isActionPending = false,
 }) => {
 	const handleClose = () => {
 		setOpen(false);
@@ -89,10 +88,6 @@ const Modal: React.FC<IModalProps> = ({
 						</Typography>
 					)}
 				</Box>
-
-				<StyledCloseButton aria-label="close" onClick={handleClose}>
-					<CloseIcon />
-				</StyledCloseButton>
 			</StyledDialogTitle>
 
 			{children && <DialogContent>{children}</DialogContent>}
@@ -115,10 +110,32 @@ const Modal: React.FC<IModalProps> = ({
 				<Button
 					onClick={onAction}
 					variant="contained"
-					color="primary"
+					color={actionColor}
 					autoFocus
+					disabled={isActionPending}
+					sx={{
+						minWidth: 100,
+						"&.Mui-disabled": {
+							backgroundColor: `${actionColor}.main`,
+							opacity: 0.7,
+							color: `${actionColor}.contrastText`,
+						},
+					}}
 				>
-					{actionName}
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							minHeight: "28px",
+						}}
+					>
+						{isActionPending ? (
+							<CircularProgress size={24} color="inherit" />
+						) : (
+							actionName
+						)}
+					</Box>
 				</Button>
 			</DialogActions>
 		</StyledDialog>

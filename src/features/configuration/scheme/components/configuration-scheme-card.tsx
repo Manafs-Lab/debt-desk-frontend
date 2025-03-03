@@ -1,3 +1,5 @@
+import Modal from "@/components/ui/modal";
+import { messages } from "@/config/constant";
 import {
 	Button,
 	Card,
@@ -7,6 +9,8 @@ import {
 	SxProps,
 	Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { useDeleteConfigurationScheme } from "../api/delete-configuration-scheme";
 import { TConfigurationScheme } from "../api/get-all-configuration-scheme";
 
@@ -16,11 +20,26 @@ type TSchemeCard = {
 };
 
 const SchemeCard = ({ sx, scheme }: TSchemeCard) => {
-	const { mutate: deleteScheme } = useDeleteConfigurationScheme();
+	const {
+		mutate: deleteScheme,
+		isPending,
+		isSuccess,
+	} = useDeleteConfigurationScheme();
+	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+	const { enqueueSnackbar } = useSnackbar();
 
 	const onDelete = () => {
 		deleteScheme({ schemeId: scheme.id });
 	};
+
+	useEffect(() => {
+		if (isSuccess) {
+			setOpenDeleteDialog(false);
+			enqueueSnackbar(messages.delete.notification.success("scheme"), {
+				variant: "success",
+			});
+		}
+	}, [isSuccess, enqueueSnackbar]);
 
 	return (
 		<Card sx={{ ...sx }}>
@@ -66,11 +85,22 @@ const SchemeCard = ({ sx, scheme }: TSchemeCard) => {
 					variant="outlined"
 					color="error"
 					size="small"
-					onClick={onDelete}
+					onClick={() => setOpenDeleteDialog(true)}
 				>
 					Delete
 				</Button>
 			</CardActions>
+			<Modal
+				open={openDeleteDialog}
+				setOpen={setOpenDeleteDialog}
+				title="Delete Scheme"
+				actionName="Delete"
+				onAction={onDelete}
+				actionColor="error"
+				isActionPending={isPending}
+			>
+				<Typography>{messages.delete.confirm("scheme")}</Typography>
+			</Modal>
 		</Card>
 	);
 };

@@ -22,6 +22,10 @@ apiClient.interceptors.response.use(
 				redirect: LOGIN_ROUTE,
 			});
 		}
-		return Promise.reject(error);
+
+		Promise.reject({
+			...new Error(),
+			message: error.response?.data?.message || error.message || "API Error",
+		});
 	},
 );

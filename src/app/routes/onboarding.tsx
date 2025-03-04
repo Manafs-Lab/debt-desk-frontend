@@ -1,4 +1,4 @@
-import { MainErrorFallback as ErrorPage } from "@/components/errors/main";
+import { MainErrorComponent as ErrorPage } from "@/components/errors/main";
 import PublicLayout from "@/components/layouts/public-layout";
 import OnboardingMultiStepForm from "@/features/onboarding/components/onboarding-form";
 import { Box, CircularProgress } from "@mui/material";

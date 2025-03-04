@@ -3,11 +3,17 @@ import { Box, Button, Typography } from "@mui/material";
 type TMainErrorFallBack = {
 	message?: string | null;
 	showRefreshButton?: boolean;
+	showHomeButton?: boolean;
 };
 
-export const MainErrorFallback = ({
-	message,
-	showRefreshButton,
+export const MainErrorFallback = () => {
+	return <MainErrorComponent />;
+};
+
+export const MainErrorComponent = ({
+	message = null,
+	showRefreshButton = true,
+	showHomeButton = true,
 }: TMainErrorFallBack) => {
 	return (
 		<Box
@@ -16,8 +22,7 @@ export const MainErrorFallback = ({
 				flexDirection: "column",
 				alignItems: "center",
 				justifyContent: "center",
-				height: "100vh",
-				width: "100vw",
+				height: "87vh",
 				color: "error.main",
 				textAlign: "center",
 			}}
@@ -30,11 +35,22 @@ export const MainErrorFallback = ({
 			{showRefreshButton && (
 				<Button
 					variant="contained"
+					color="secondary"
+					sx={{ mt: 2 }}
+					onClick={() => window.location.reload()}
+				>
+					Refresh
+				</Button>
+			)}
+
+			{showHomeButton && (
+				<Button
+					variant="contained"
 					color="primary"
 					sx={{ mt: 2 }}
 					onClick={() => window.location.assign(window.location.origin)}
 				>
-					Refresh
+					Return to Homepage
 				</Button>
 			)}
 		</Box>

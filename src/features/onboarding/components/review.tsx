@@ -8,7 +8,7 @@ import { useFormStore } from "../onboarding.store";
 
 type TReviewProps = {
 	step: number;
-	steps: Array<string>;
+	steps: string[];
 	handleNext: () => void;
 	handleBack: () => void;
 };
@@ -59,14 +59,12 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 			},
 		};
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
 		mutation.mutate(formData);
 	};
 
 	return (
-		<Box className="mt-5" component="form" onSubmit={handleSubmit(onSubmit)}>
-			<Typography variant="h6" className="mb-5" gutterBottom>
+		<Box component="form" onSubmit={handleSubmit(onSubmit)}>
+			<Typography variant="h6" sx={{ my: 3 }} gutterBottom>
 				Review Your Information
 			</Typography>
 			<Typography>Business Name: {businessName}</Typography>
@@ -90,7 +88,7 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 						type="submit"
 						variant="contained"
 						isLoading={isSubmitting}
-						disabled={isSubmitting}
+						isDisabled={isSubmitting}
 					/>
 				</Box>
 			</Box>

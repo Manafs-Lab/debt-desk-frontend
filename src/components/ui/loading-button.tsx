@@ -1,11 +1,12 @@
+import { TButtonColors } from "@/types/theme.types";
 import { Button, CircularProgress } from "@mui/material";
 
 interface LoadingButtonProps {
 	text: string;
 	isLoading?: boolean;
-	disabled?: boolean;
+	isDisabled?: boolean;
 	variant?: "text" | "outlined" | "contained";
-	color?: "primary" | "secondary" | "error" | "success" | "info" | "warning";
+	color?: TButtonColors;
 	type?: "button" | "submit" | "reset";
 	onClick?: () => void;
 }
@@ -13,7 +14,7 @@ interface LoadingButtonProps {
 const LoadingButton: React.FC<LoadingButtonProps> = ({
 	text,
 	isLoading = false,
-	disabled = false,
+	isDisabled = false,
 	variant = "contained",
 	color = "primary",
 	type = "button",
@@ -25,8 +26,18 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
 			variant={variant}
 			color={color}
 			onClick={onClick}
-			disabled={disabled || isLoading}
-			sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 120 }}
+			disabled={isDisabled || isLoading}
+			sx={{
+				display: "flex",
+				alignItems: "center",
+				gap: 1,
+				minWidth: 120,
+				"&.Mui-disabled": {
+					backgroundColor: `${color}.main`,
+					opacity: 0.7,
+					color: `${color}.contrastText`,
+				},
+			}}
 		>
 			{isLoading && <CircularProgress size={15} color="inherit" />}
 			{text}

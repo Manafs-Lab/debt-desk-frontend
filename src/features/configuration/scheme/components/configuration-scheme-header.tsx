@@ -12,6 +12,7 @@ const ConfigurationSchemeHeader = () => {
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 	const { enqueueSnackbar } = useSnackbar();
 	const formRef = useRef<HTMLFormElement>(null);
+	const [isFormValid, setIsFormValid] = useState(false);
 
 	const {
 		mutate: createScheme,
@@ -22,9 +23,18 @@ const ConfigurationSchemeHeader = () => {
 	const { name, schemeType, entryType, description, reset } =
 		useSchemeFormStore();
 
+	const handleFormValidation = (isValid: boolean) => {
+		setIsFormValid(isValid);
+	};
+
 	const onCreateScheme = () => {
 		if (formRef.current) {
 			formRef.current.requestSubmit();
+		}
+	};
+
+	useEffect(() => {
+		if (isFormValid) {
 			const schemeData = {
 				name: name,
 				scheme_type: schemeType,
@@ -32,9 +42,11 @@ const ConfigurationSchemeHeader = () => {
 				description: description,
 				business_id: "0f7cf6eb-6af0-47d2-953d-cb440bf4f81d",
 			};
+
 			createScheme(schemeData);
+			setIsFormValid(false);
 		}
-	};
+	}, [isFormValid, createScheme]);
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -71,7 +83,10 @@ const ConfigurationSchemeHeader = () => {
 				isActionPending={isPending}
 				onClose={reset}
 			>
-				<ConfigurationSchemeForm formRef={formRef} />
+				<ConfigurationSchemeForm
+					formRef={formRef}
+					onValidSubmit={handleFormValidation}
+				/>
 			</Modal>
 		</Box>
 	);

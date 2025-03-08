@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	Box,
 	FormControl,
+	FormHelperText,
 	InputLabel,
 	MenuItem,
 	Select,
@@ -26,9 +27,13 @@ export type TCreateSchemeData = z.infer<typeof SchemeCreateSchema>;
 
 type TConfigurationSchemeProps = {
 	formRef: RefObject<HTMLFormElement>;
+	onValidSubmit: (isValid: boolean) => void;
 };
 
-const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
+const ConfigurationSchemeForm = ({
+	formRef,
+	onValidSubmit,
+}: TConfigurationSchemeProps) => {
 	const { setFields, name, schemeType, entryType, description } =
 		useSchemeFormStore();
 
@@ -44,16 +49,21 @@ const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
 			entryType: entryType || "",
 			description: description || "",
 		},
+		mode: "onChange",
 	});
 
 	const onSubmit = (data: TCreateSchemeData) => {
-		console.log(data);
 		setFields({
 			name: data.name,
 			schemeType: data.schemeType,
 			entryType: data.entryType,
-			description: data.entryType,
+			description: data.description,
 		});
+		onValidSubmit(true);
+	};
+
+	const onError = () => {
+		onValidSubmit(false);
 	};
 
 	return (
@@ -66,8 +76,9 @@ const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
 				pt: 2,
 			}}
 			component="form"
-			onSubmit={handleSubmit(onSubmit)}
+			onSubmit={handleSubmit(onSubmit, onError)}
 			ref={formRef}
+			noValidate
 		>
 			<TextField
 				fullWidth
@@ -84,6 +95,7 @@ const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
 					id="scheme-type"
 					label="Scheme Type"
 					labelId="scheme-type-label"
+					defaultValue={schemeType}
 					{...register("schemeType")}
 				>
 					{schemeOptions.schemeTypes.map(({ value, label }) => (
@@ -92,6 +104,9 @@ const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
 						</MenuItem>
 					))}
 				</Select>
+				{errors.schemeType && (
+					<FormHelperText>{errors.schemeType.message}</FormHelperText>
+				)}
 			</FormControl>
 
 			<FormControl fullWidth error={!!errors.entryType} required>
@@ -100,6 +115,7 @@ const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
 					id="entry-type"
 					label="Entry Type"
 					labelId="entry-type-label"
+					defaultValue={entryType}
 					{...register("entryType")}
 				>
 					{schemeOptions.entryTypes.map(({ value, label }) => (
@@ -108,6 +124,9 @@ const ConfigurationSchemeForm = ({ formRef }: TConfigurationSchemeProps) => {
 						</MenuItem>
 					))}
 				</Select>
+				{errors.entryType && (
+					<FormHelperText>{errors.entryType.message}</FormHelperText>
+				)}
 			</FormControl>
 
 			<TextField

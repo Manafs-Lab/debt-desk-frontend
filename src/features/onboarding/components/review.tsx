@@ -1,3 +1,4 @@
+import LoadingButton from "@/components/ui/loading-button";
 import { LOGIN_ROUTE } from "@/config/constant";
 import { Box, Button, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -7,7 +8,7 @@ import { useFormStore } from "../onboarding.store";
 
 type TReviewProps = {
 	step: number;
-	steps: Array<string>;
+	steps: string[];
 	handleNext: () => void;
 	handleBack: () => void;
 };
@@ -25,7 +26,10 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 		password,
 	} = useFormStore();
 
-	const { handleSubmit } = useForm();
+	const {
+		handleSubmit,
+		formState: { isSubmitting },
+	} = useForm();
 
 	const mutation = useSubmitOnboarding({
 		onSuccess: () => {
@@ -59,8 +63,8 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 	};
 
 	return (
-		<Box className="mt-5" component="form" onSubmit={handleSubmit(onSubmit)}>
-			<Typography variant="h6" gutterBottom>
+		<Box component="form" onSubmit={handleSubmit(onSubmit)}>
+			<Typography variant="h6" sx={{ my: 3 }} gutterBottom>
 				Review Your Information
 			</Typography>
 			<Typography>Business Name: {businessName}</Typography>
@@ -78,9 +82,14 @@ const Review = ({ step, steps, handleBack }: TReviewProps) => {
 							Back
 						</Button>
 					)}
-					<Button type="submit" variant="contained">
-						{step === steps.length ? "Submit" : "Next"}
-					</Button>
+
+					<LoadingButton
+						text={step === steps.length ? "Submit" : "Next"}
+						type="submit"
+						variant="contained"
+						isLoading={isSubmitting}
+						isDisabled={isSubmitting}
+					/>
 				</Box>
 			</Box>
 		</Box>

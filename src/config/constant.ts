@@ -9,4 +9,28 @@ export const messages = {
 			error: (item: string) => `Failed to delete ${item}`,
 		},
 	},
+	create: {
+		notification: {
+			success: (item: string) => `${item} created successfully`,
+			error: (item: string) => `Failed to create ${item}`,
+		},
+	},
+	update: {
+		notification: {
+			success: (item: string) => `${item} updated successfully`,
+			error: (item: string) => `Failed to update ${item}`,
+		},
+	},
+};
+
+export const schemeOptions = {
+	schemeTypes: [
+		{ value: "loan", label: "Loan" },
+		{ value: "savings", label: "Savings" },
+	],
+	entryTypes: [
+		{ value: "daily", label: "Daily" },
+		{ value: "weekly", label: "Weekly" },
+		{ value: "monthly", label: "Monthly" },
+	],
 };

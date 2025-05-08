@@ -1,13 +1,18 @@
 import {
+	ArrowDropDown,
 	FirstPage,
 	KeyboardArrowLeft,
 	KeyboardArrowRight,
 	LastPage,
+	MoreVert,
 } from "@mui/icons-material";
 import {
 	Box,
+	Button,
 	CircularProgress,
 	IconButton,
+	Menu,
+	MenuItem,
 	Paper,
 	Table,
 	TableBody,
@@ -16,6 +21,7 @@ import {
 	TableHead,
 	TablePagination,
 	TableRow,
+	Tooltip,
 	Typography,
 } from "@mui/material";
 import {
@@ -27,7 +33,30 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
+
+interface RowAction {
+	id: string;
+	label: string;
+	icon?: React.ReactNode;
+	onClick: (row: any) => void;
+	color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
+}
+
+interface RowActionsConfig {
+	actions: RowAction[];
+	displayMode?: "buttons" | "menu" | "dropdown";
+	showIcons?: boolean;
+	showLabels?: boolean;
+	menuIcon?: React.ReactNode;
+	buttonColor?:
+		| "primary"
+		| "secondary"
+		| "error"
+		| "info"
+		| "success"
+		| "warning";
+}
 
 interface BaseDataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -35,6 +64,7 @@ interface BaseDataTableProps<TData, TValue> {
 	pageSize?: number;
 	showNavigation?: boolean;
 	showPageSize?: boolean;
+	rowActions?: RowActionsConfig;
 }
 
 interface ServerSideProps {
@@ -108,18 +138,164 @@ export function DataTable<TData, TValue>({
 	onPageChange,
 	onPageSizeChange,
 	isLoading = false,
+	rowActions,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [localPage, setLocalPage] = useState(0);
 	const [localPageSize, setLocalPageSize] = useState(pageSize);
+	const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+	const [activeRow, setActiveRow] = useState<any>(null);
+	const [openMenu, setOpenMenu] = useState(false);
+	const [menuActions, setMenuActions] = useState<RowAction[]>([]);
 
 	const isServerSide = Boolean(
 		onPageChange && onPageSizeChange && typeof totalRows === "number",
 	);
 
+	const handleMenuClick = (
+		event: React.MouseEvent<HTMLElement>,
+		row: any,
+		actions: RowAction[],
+	) => {
+		setMenuAnchorEl(event.currentTarget);
+		setActiveRow(row);
+		setMenuActions(actions);
+		setOpenMenu(true);
+	};
+
+	const handleMenuClose = () => {
+		setMenuAnchorEl(null);
+		setActiveRow(null);
+		setOpenMenu(false);
+	};
+
+	const renderRowActions = (row: any) => {
+		if (!rowActions) return null;
+
+		const {
+			actions,
+			displayMode = "buttons",
+			showIcons = true,
+			showLabels = true,
+			menuIcon = <MoreVert />,
+			buttonColor = "primary",
+		} = rowActions;
+
+		if (displayMode === "menu") {
+			return (
+				<>
+					<IconButton
+						size="small"
+						onClick={(e) => handleMenuClick(e, row, actions)}
+						aria-label="row actions"
+						color={buttonColor}
+					>
+						{menuIcon}
+					</IconButton>
+				</>
+			);
+		}
+
+		if (displayMode === "dropdown") {
+			const [firstAction, ...otherActions] = actions;
+			return (
+				<Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+					<Button
+						size="small"
+						onClick={() => firstAction.onClick(row)}
+						color={firstAction.color || buttonColor}
+						startIcon={
+							showIcons && firstAction.icon ? firstAction.icon : undefined
+						}
+						sx={{
+							fontSize: "inherit",
+							textTransform: "none",
+							minWidth: "auto",
+							px: 1,
+							"& .MuiSvgIcon-root": {
+								fontSize: "1.25rem",
+							},
+						}}
+					>
+						{showLabels && firstAction.label}
+					</Button>
+					{otherActions.length > 0 && (
+						<>
+							<IconButton
+								size="small"
+								onClick={(e) => handleMenuClick(e, row, otherActions)}
+								color={buttonColor}
+								sx={{ p: 0.5, marginLeft: -1.5 }}
+							>
+								<ArrowDropDown />
+							</IconButton>
+							<Menu
+								anchorEl={menuAnchorEl}
+								open={Boolean(menuAnchorEl) && activeRow?.id === row.id}
+								onClose={handleMenuClose}
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "right",
+								}}
+								transformOrigin={{
+									vertical: "top",
+									horizontal: "right",
+								}}
+								sx={{
+									"& .MuiPaper-root": {
+										minWidth: 180,
+									},
+								}}
+							></Menu>
+						</>
+					)}
+				</Box>
+			);
+		}
+
+		return (
+			<Box sx={{ display: "flex", gap: 1 }}>
+				{actions.map((action) => (
+					<Tooltip key={action.id} title={action.label}>
+						<Button
+							size="small"
+							onClick={() => action.onClick(row)}
+							color={action.color || buttonColor}
+							startIcon={showIcons && action.icon ? action.icon : undefined}
+							sx={{
+								fontSize: "inherit",
+								textTransform: "none",
+								minWidth: "auto",
+								px: 1,
+								"& .MuiSvgIcon-root": {
+									fontSize: "1.25rem",
+								},
+							}}
+						>
+							{showLabels && action.label}
+						</Button>
+					</Tooltip>
+				))}
+			</Box>
+		);
+	};
+
+	const tableColumns = useMemo(() => {
+		if (!rowActions) return columns;
+
+		return [
+			...columns,
+			{
+				id: "actions",
+				header: "Actions",
+				cell: ({ row }) => renderRowActions(row.original),
+			},
+		];
+	}, [columns, rowActions]);
+
 	const table = useReactTable({
 		data,
-		columns,
+		columns: tableColumns,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: isServerSide ? undefined : getPaginationRowModel(),
@@ -248,6 +424,55 @@ export function DataTable<TData, TValue>({
 					ActionsComponent={TablePaginationActions}
 				/>
 			)}
+
+			<Menu
+				anchorEl={menuAnchorEl}
+				open={Boolean(menuAnchorEl) && openMenu}
+				onClose={handleMenuClose}
+				sx={{
+					"& .MuiPaper-root": {
+						minWidth: 180,
+					},
+				}}
+			>
+				{menuActions.map((action) => {
+					const color = action.color || rowActions?.buttonColor;
+					return (
+						<MenuItem
+							key={action.id}
+							onClick={() => {
+								action.onClick(activeRow);
+								handleMenuClose();
+							}}
+							sx={{
+								color: `${color}.main`,
+								"&:hover": {
+									backgroundColor: `${color}.lighter`,
+								},
+							}}
+						>
+							{rowActions?.showIcons && action.icon && (
+								<Box
+									component="span"
+									sx={{
+										mr: 1,
+										display: "flex",
+										alignItems: "center",
+										color: "inherit",
+									}}
+								>
+									{React.cloneElement(action.icon as React.ReactElement, {
+										sx: { color: "inherit" },
+									})}
+								</Box>
+							)}
+							<Box component="span" sx={{ color: "inherit" }}>
+								{rowActions?.showLabels && action.label}
+							</Box>
+						</MenuItem>
+					);
+				})}
+			</Menu>
 		</Paper>
 	);
 }

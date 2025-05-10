@@ -54,7 +54,7 @@ export const useGetAllUser = ({
 	skip = 0,
 }: TUseGetAllUserParams) => {
 	return useQuery({
-		queryKey: ["user", { businessId, limit, skip }],
+		queryKey: ["users", { businessId, limit, skip }],
 		queryFn: () => getAllUser({ businessId, limit, skip }),
 		...queryConfig,
 	});

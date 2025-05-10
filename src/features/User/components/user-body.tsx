@@ -1,6 +1,12 @@
 import DataTable from "@/components/ui/data-table";
+import Modal from "@/components/ui/modal";
+import { messages } from "@/config/constant";
 import { Delete, Edit } from "@mui/icons-material";
+import { Typography } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
+import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useDeleteUser } from "../api/delete-user";
 import { TUser, useGetAllUser } from "../api/get-all-user";
 
 const columns: ColumnDef<TUser>[] = [
@@ -41,6 +47,37 @@ const UserBody = () => {
 		skip: 0,
 	});
 
+	const {
+		mutate: deleteUser,
+		isPending: isDeletePending,
+		isSuccess: isDeleteSuccess,
+	} = useDeleteUser();
+
+	const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+	const { enqueueSnackbar } = useSnackbar();
+
+	const handleDelete = (data: TUser) => {
+		setSelectedUser(data);
+		setOpenDeleteDialog(true);
+	};
+
+	const onDelete = () => {
+		if (selectedUser) {
+			deleteUser({ userId: selectedUser.id });
+		}
+	};
+
+	useEffect(() => {
+		if (isDeleteSuccess) {
+			setOpenDeleteDialog(false);
+			setSelectedUser(null);
+			enqueueSnackbar(messages.delete.notification.success("user"), {
+				variant: "success",
+			});
+		}
+	}, [isDeleteSuccess, enqueueSnackbar]);
+
 	return (
 		<>
 			<DataTable
@@ -63,8 +100,8 @@ const UserBody = () => {
 							id: "delete",
 							label: "Delete",
 							icon: <Delete />,
-							onClick: (data: any) => {
-								console.log("User Data", data);
+							onClick: (data: TUser) => {
+								handleDelete(data);
 							},
 							color: "error",
 						},
@@ -74,6 +111,17 @@ const UserBody = () => {
 					showIcons: true,
 				}}
 			/>
+			<Modal
+				open={openDeleteDialog}
+				setOpen={setOpenDeleteDialog}
+				title="Delete User"
+				actionName="Delete"
+				onAction={onDelete}
+				actionColor="error"
+				isActionPending={isDeletePending}
+			>
+				<Typography>{messages.delete.confirm("user")}</Typography>
+			</Modal>
 		</>
 	);
 };

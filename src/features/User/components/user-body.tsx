@@ -1,6 +1,7 @@
 import DataTable from "@/components/ui/data-table";
 import Modal from "@/components/ui/modal";
 import { messages } from "@/config/constant";
+import useAuthStore from "@/features/auth/auth.store";
 import { Delete, Edit } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
@@ -41,8 +42,9 @@ const columns: ColumnDef<TUser>[] = [
 ];
 
 const UserBody = () => {
+	const user = useAuthStore((state) => state.user);
 	const { data, isLoading } = useGetAllUser({
-		businessId: "8bccfe28-1829-4a01-9bfa-56ee24d209a2",
+		businessId: user?.business.business_id || "",
 		limit: 10,
 		skip: 0,
 	});

@@ -1,6 +1,7 @@
 import PrivateRoute from "@/components/layouts/private-route";
 import { LOGIN_ROUTE } from "@/config/constant";
 import { Route, Switch, Router as WouterRouter } from "wouter";
+import User from "./routes/User";
 import ConfigurationScheme from "./routes/configuration/scheme";
 import ConfigurationStaff from "./routes/configuration/staff";
 import Dashboard from "./routes/dashboard";
@@ -26,6 +27,7 @@ const AppRouter = () => {
 					path="/configuration/staffs"
 					component={ConfigurationStaff}
 				/>
+				<PrivateRoute path="/users" component={User} />
 				<Route path="/business/verify" component={OnboardingForm} />
 				<Route path="*" component={NotFoundRoute} />
 			</Switch>
